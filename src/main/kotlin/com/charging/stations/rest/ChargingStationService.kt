@@ -1,5 +1,7 @@
 package com.charging.stations.rest
 
+import com.charging.stations.response.ChargingStationsResponse
+
 interface ChargingStationService {
-    fun getChargingStationDetails(city : String): String?
+    fun getChargingStationDetails(city : String): ChargingStationsResponse?
 }
