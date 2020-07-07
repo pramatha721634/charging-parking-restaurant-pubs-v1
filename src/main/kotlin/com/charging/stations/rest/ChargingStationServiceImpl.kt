@@ -28,6 +28,7 @@ class ChargingStationServiceImpl: ChargingStationService {
     var itemDetailsList : HashSet<ItemDetails> = HashSet<ItemDetails>()
 
     override fun getChargingStationDetails(city: String): ChargingStationsResponse? {
+
         var longitudeAndLatitude = getLongitudeAndLatitude(city)
         if (longitudeAndLatitude == null)  {
             throw CityNotFoundException("Given City not found!!!!")
@@ -74,9 +75,9 @@ class ChargingStationServiceImpl: ChargingStationService {
             chargingStationsResponse.chargeStationsList = itemDetailsList
 
         } catch (ioException: IOException) {
-
+             ioException.printStackTrace()
         } catch (exception: Exception) {
-
+              exception.printStackTrace()
         }
         return chargingStationsResponse
     }
