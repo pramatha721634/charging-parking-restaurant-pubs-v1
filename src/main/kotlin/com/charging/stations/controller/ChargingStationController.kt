@@ -1,5 +1,6 @@
 package com.charging.stations.controller
 
+import com.charging.stations.response.AggregatedResponse
 import com.charging.stations.response.ChargingStationsResponse
 import com.charging.stations.rest.ChargingStationService
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,8 +14,8 @@ class ChargingStationController {
     @Autowired
     lateinit var chargingStationService: ChargingStationService
 
-    @GetMapping("/charging_stations/{city}")
-    fun getChargingStation(@PathVariable city: String): ChargingStationsResponse? {
+    @GetMapping("/api_details/{city}")
+    fun getChargingStation(@PathVariable city: String): AggregatedResponse? {
         return chargingStationService.getChargingStationDetails(city)
     }
 }
