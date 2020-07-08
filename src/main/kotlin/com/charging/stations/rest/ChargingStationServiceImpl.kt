@@ -1,11 +1,9 @@
 package com.charging.stations.rest
 
 import com.charging.stations.configurations.ChargingStationsConfig
+import com.charging.stations.constants.ChargingStationsConstants
 import com.charging.stations.exceptions.CityNotFoundException
-import com.charging.stations.response.Address
-import com.charging.stations.response.Category
-import com.charging.stations.response.ChargingStationsResponse
-import com.charging.stations.response.ItemDetails
+import com.charging.stations.response.*
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,16 +25,31 @@ class ChargingStationServiceImpl: ChargingStationService {
 
     var itemDetailsList : HashSet<ItemDetails> = HashSet<ItemDetails>()
 
-    override fun getChargingStationDetails(city: String): ChargingStationsResponse? {
 
+    override fun getChargingStationDetails(city: String): AggregatedResponse? {
+        var aggregatedResponse = AggregatedResponse();
         var longitudeAndLatitude = getLongitudeAndLatitude(city)
         if (longitudeAndLatitude == null)  {
             throw CityNotFoundException("Given City not found!!!!")
         }
-        val baseURL: String = chargingStationsConfig.baseUrl + "?at=" + longitudeAndLatitude + "&cat=" + chargingStationsConfig.cat + "&apiKey="+chargingStationsConfig.apiKey
+        val baseURLForChargingStationAPI: String = chargingStationsConfig.baseUrl + "?at=" + longitudeAndLatitude + "&cat=" + ChargingStationsConstants.chargingStationsCat + "&apiKey="+chargingStationsConfig.apiKey
+        val baseURLForParkingFacilityAPI: String = chargingStationsConfig.baseUrl + "?at=" + longitudeAndLatitude + "&cat=" + ChargingStationsConstants.parkingFacilityCat + "&apiKey="+chargingStationsConfig.apiKey
+        val baseURLForEatAndDrinkAPI: String = chargingStationsConfig.baseUrl + "?at=" + longitudeAndLatitude + "&cat=" + ChargingStationsConstants.eatAndDrinkCat + "&apiKey="+chargingStationsConfig.apiKey
 
-        var chargingStationDetails = restTemplate.getForObject(baseURL, String::class.java)
-        return getChargingStationsResponse(chargingStationDetails)
+
+        var chargingStationDetails = restTemplate.getForObject(baseURLForChargingStationAPI, String::class.java)
+        var parkingFacilityDetails = restTemplate.getForObject(baseURLForParkingFacilityAPI, String::class.java)
+        var eatAndDrinkDetails = restTemplate.getForObject(baseURLForEatAndDrinkAPI, String::class.java)
+
+        var getChargingStationsResponseDetails = getChargingStationsResponse(chargingStationDetails)
+        var getParkingFacilityResponseDetails = getChargingStationsResponse(parkingFacilityDetails)
+        var getEatAndDrinkResponseDetails = getChargingStationsResponse(eatAndDrinkDetails)
+
+        aggregatedResponse.charging_stations = getChargingStationsResponseDetails
+        aggregatedResponse.parking_facility =  getParkingFacilityResponseDetails
+        aggregatedResponse.eat_drink = getEatAndDrinkResponseDetails
+
+        return aggregatedResponse
     }
 
     fun getLongitudeAndLatitude(city : String) : String? {
