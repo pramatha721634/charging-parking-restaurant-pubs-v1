@@ -1,5 +1,5 @@
 # charging-stations-v1
-charging-stations-v1 charging-stations-v1 API give charging stations, OnStreet Parking, OffStreet Parking and nearby PUB and Restaurants details within the given city name
+charging-stations-v1 API give charging stations, OnStreet Parking, OffStreet Parking and nearby PUB and Restaurants details within the given city name
 
 Please use below curl for testing the API
 
